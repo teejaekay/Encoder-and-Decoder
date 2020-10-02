@@ -6,7 +6,7 @@
 #include <iostream>
 using namespace std;
 
-
+//output the encoding of a line based on last column of sorted cyclic shifts
 void encode(string* array[], string original) {
     
     int size = (**array).length();
@@ -16,6 +16,8 @@ void encode(string* array[], string original) {
     
     // creating string for last column
     for (int i = 0; i < size; i++) {
+        
+        // iterate over every string in array and grab last letter
         last = last + (*(array[i]))[size - 1];
     }
     
@@ -84,6 +86,44 @@ void encode(string* array[], string original) {
     
 }
 
+// function to swap string pointers in array of string pointers
+void swapPointers(string* array[], int i, int j)
+{
+    string* temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+}
+
+int partitionFunc(string* array[], int left, int right) {
+    
+    string* pivot = array[right];
+    int i = left - 1;
+    
+    for (int j = left; j <= right - 1; j++) {
+        
+        if (*(array[j]) < *pivot) {
+            
+            i++;
+            swapPointers(array, i, j);
+        }
+    }
+    
+    swapPointers(array, i + 1, right);
+    
+    return (i + 1);
+}
+
+void quickSort(string* array[], int left, int right) {
+    
+    if (left < right) {
+        
+        int num = partitionFunc(array, left, right);
+        
+        quickSort(array, left, num - 1);
+        quickSort(array, num + 1, right);
+    }
+}
+
 // insertion sort method that takes in an array of string pointers
 void insertionSort(string* array[], int size) {
     
@@ -112,7 +152,7 @@ void insertionSort(string* array[], int size) {
     
 }
 
-void shift(string str) {
+void shift(string str, string sortType) {
     
     int size = str.length();
     
@@ -136,8 +176,20 @@ void shift(string str) {
         
     }
     
-    // sending array of pointers to be sorted
-    insertionSort(ptrs, size);
+    if (sortType == "insertion") {
+        // sending array of pointers to be sorted using insertion sort
+        insertionSort(ptrs, size);
+    }
+        
+    else if (sortType == "quick") {
+        // sending array of pointers to be sorted using quick sort
+        quickSort(ptrs, 0, size - 1);
+        encode(ptrs, str);
+        
+    } else {
+         cout << "invalid parameter";
+    }
+       
     
     delete[] strings;
     delete[] ptrs; 
@@ -158,15 +210,36 @@ int main(int argc, char *argv[]) {
             if (line.empty())
                 cout << endl;
             else
-                shift(line);
+                shift(line, "insertion");
         }
+
     } else if (argv[1] == quick){
-        cout << "quicksort not supported" << endl;
+
+        // get line as a string and send to be shifted
+        while (getline(cin,line)) {
+            if (line.empty())
+                cout << endl;
+            else
+                shift(line, "quick");
+        }
+
     } else {
         cout << "invalid parameter" << endl;
     }
+// -------------------------------------------------------------------------------
+// code for testing in IDE
     
-    
+//    string letter;
+//    getline(cin, line);
+//    getline(cin,letter);
+//
+//    if (letter == "i")
+//        shift(line, "insertion");
+//    else if (letter == "q")
+//        shift(line, "quick");
+//    else
+//        cout << "invalid input" << endl;
+
 }
 
 

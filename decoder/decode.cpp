@@ -48,7 +48,45 @@ void decode(string first, string last, int index) {
     delete[] next;
 }
 
-string insertionSort(string str, int index) {
+void swapChar(string* str, int i, int j) {
+    
+    char temp = (*str)[i];
+    (*str)[i] = (*str)[j];
+    (*str)[j] = temp;
+    
+}
+
+int partitionFunc(string* str, int left, int right) {
+    
+    char pivot = (*str)[right];
+    int i = left - 1;
+    
+    for (int j = left; j <= right - 1; j++) {
+        
+        if ((*str)[j] < pivot) {
+            i++;
+            swapChar(str, i, j);
+        }
+    }
+    
+    swapChar(str, i + 1, right);
+    
+    return (i + 1);
+}
+
+string quickSort(string* str, int left, int right) {
+    
+    if (left < right) {
+        
+        int num = partitionFunc(str, left, right);
+        
+        quickSort(str, left, num - 1);
+        quickSort(str, num + 1, right);
+    }
+    return *str;
+}
+
+string insertionSort(string str) {
     
     int size = str.length();
     
@@ -121,17 +159,9 @@ int main(int argc, const char * argv[]) {
     string index;
     string last;
     
-    string canada = "1 d 1 n 1 c 3 a";
-    string Mississippi = "1 i 1 p 2 s 1 M 1 p 1 i 2 s 2 i";
-    string canada_canada = "1 a 2 d 2 n 2 c 1 a 1   4 a";
-    
-    
-    
     if (argv[1] == insertion) {
 
         while (getline(cin,index)) {
-
-
 
             if (index.empty()) {
                  cout << endl;
@@ -141,25 +171,64 @@ int main(int argc, const char * argv[]) {
                 getline(cin, str);
 
                 last = makeLast(str);
-                decode(insertionSort(last, idx), last, idx);
+                decode(insertionSort(last), last, idx);
             }
 
         }
-    } else if (argv[1] == quick){
-        cout << "quicksort not supported" << endl;
+
+    } else if (argv[1] == quick) {
+
+        while (getline(cin,index)) {
+
+            if (index.empty()) {
+                 cout << endl;
+            } else {
+
+                int idx = stoi(index);
+                getline(cin, str);
+
+                last = makeLast(str);
+                int size = last.length() ;
+                string sortedLast = last;
+    
+                decode(quickSort(&sortedLast, 0, size - 1), last, idx);
+            }
+
+        }
+
     } else {
         cout << "invalid parameter" << endl;
     }
     
 // ---------------------------------------------------------------------------------
+// Code for testing in IDE
+    
+//          canada       3: 1 d 1 n 1 c 3 a
+//     Mississippi       0: 1 i 1 p 2 s 1 M 1 p 1 i 2 s 2 i
+//   canada canada       7: 1 a 2 d 2 n 2 c 1 a 1   4 a
     
 //    getline(cin, index);
 //    getline(cin, str);
 //
 //    int idx = stoi(index);
 //    last = makeLast(str);
-//    //cout << "last: " << last << endl;
+//    int size = last.length();
+//    string sortedLast = last;
 //
-//    decode(insertionSort(last, idx), last, idx);
+//    cout << "quick or insertion? (type q or i)" << endl;
+//    string choice;
+//    getline(cin,choice);
+//
+//    if (choice == "q") {
+//
+//        decode(quickSort(&sortedLast, 0, size - 1), last, idx);
+//    }
+//    else if (choice == "i") {
+//
+//        decode(insertionSort(last), last, idx);
+//    }
+//    else {
+//        cout << "invalid sorting method" << endl;
+//    }
     
 }
